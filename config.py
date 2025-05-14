@@ -5,11 +5,14 @@ DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 FETCH_INTERVAL = 60  # Sekunden
 
 RSS_FEEDS_CHANNELS = {
-    # Trump News
+    # Trump News (Medien-News über Trump)
     "https://rss.politico.com/donald-trump.xml": 1371879824997744791,
+    
+    # Trump's eigene Truth Social Posts
+    "https://rss.app/feeds/4NfbW8s5xqV7G7M4.xml": 1371879824997744791,  # echte Trump Posts
 
-    # n-tv News
-    "https://www.n-tv.de/rss": 1371879772367622225,
+    # Neuer n-tv Feed (mit Bildern!)
+    "https://rss.app/feeds/your_new_n_tv_feed.xml": 1371879772367622225,  # bitte gleich ersetzt durch richtigen neuen Feed
 
     # Weitere Feeds
     "https://rss.app/feeds/LHqcalDfUI6gqB33.xml": 1371879882258124840,  # Investing
