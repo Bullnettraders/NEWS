@@ -1,7 +1,8 @@
 import discord
 import asyncio
 import datetime
-from config import DISCORD_TOKEN, RSS_FEEDS, FETCH_INTERVAL
+import os
+from config import DISCORD_TOKEN, RSS_FEEDS_CHANNELS, FETCH_INTERVAL
 from news_fetcher import fetch_news
 from translator import translate_text
 from deduplicator import is_new
@@ -10,9 +11,9 @@ from keep_alive import keep_alive
 
 intents = discord.Intents.default()
 intents.message_content = True
-client = discord.Client(intents=intents)   # <--- CLIENT wird HIER erstellt
+client = discord.Client(intents=intents)
 
-keep_alive()  # Webserver starten (damit Railway nicht stopt)
+keep_alive()
 
 @client.event
 async def on_ready():
@@ -21,12 +22,13 @@ async def on_ready():
 async def news_loop():
     await client.wait_until_ready()
     while not client.is_closed():
-        news_list = fetch_news(RSS_FEEDS)
-        for news_item in news_list:
-            if is_new(news_item):
-                translated_title = translate_text(news_item["title"])
-                news_item["translated_title"] = translated_title
-                await post_news(news_item, client)
+        for feed_url, channel_id in RSS_FEEDS_CHANNELS.items():
+            news_list = fetch_news(feed_url)
+            for news_item in news_list:
+                if is_new(news_item):
+                    translated_title = translate_text(news_item["title"])
+                    news_item["translated_title"] = translated_title
+                    await post_news(news_item, client, channel_id)
         await asyncio.sleep(FETCH_INTERVAL)
 
 async def moo_moc_alerts():
@@ -35,23 +37,21 @@ async def moo_moc_alerts():
     sent_today_close = False
 
     while not client.is_closed():
-        now = datetime.datetime.utcnow() + datetime.timedelta(hours=2)  # UTC+2 für Sommerzeit
+        now = datetime.datetime.utcnow() + datetime.timedelta(hours=2)  # UTC+2
 
         if now.hour == 15 and now.minute == 0 and not sent_today_open:
-            channel = client.get_channel(int(os.getenv("CHANNEL_ID")))
-            if channel:
-                await channel.send("🔔 Nasdaq 100 (NQ) Market Open: Achte auf MOO-Volumen!")
-                sent_today_open = True
-            else:
-                print("Fehler: Channel nicht gefunden!")
+            for channel_id in set(RSS_FEEDS_CHANNELS.values()):
+                channel = client.get_channel(channel_id)
+                if channel:
+                    await channel.send("🔔 Nasdaq 100 (NQ) Market Open: Achte auf MOO-Volumen!")
+            sent_today_open = True
 
         if now.hour == 21 and now.minute == 30 and not sent_today_close:
-            channel = client.get_channel(int(os.getenv("CHANNEL_ID")))
-            if channel:
-                await channel.send("🔔 Nasdaq 100 (NQ) Market Close: Achte auf MOC-Volumen!")
-                sent_today_close = True
-            else:
-                print("Fehler: Channel nicht gefunden!")
+            for channel_id in set(RSS_FEEDS_CHANNELS.values()):
+                channel = client.get_channel(channel_id)
+                if channel:
+                    await channel.send("🔔 Nasdaq 100 (NQ) Market Close: Achte auf MOC-Volumen!")
+            sent_today_close = True
 
         if now.hour == 0 and now.minute == 0:
             sent_today_open = False
@@ -59,7 +59,6 @@ async def moo_moc_alerts():
 
         await asyncio.sleep(30)
 
-# Beide Aufgaben gleichzeitig starten
 client.loop.create_task(news_loop())
 client.loop.create_task(moo_moc_alerts())
 
