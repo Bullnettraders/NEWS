@@ -15,7 +15,6 @@ client = discord.Client(intents=intents)
 
 keep_alive()
 
-@client.event
 async def on_ready():
     print(f'{client.user} ist online und postet News.')
 
@@ -37,7 +36,7 @@ async def moo_moc_alerts():
     sent_today_close = False
 
     while not client.is_closed():
-        now = datetime.datetime.utcnow() + datetime.timedelta(hours=2)  # UTC+2
+        now = datetime.datetime.utcnow() + datetime.timedelta(hours=2)
 
         if now.hour == 15 and now.minute == 0 and not sent_today_open:
             for channel_id in set(RSS_FEEDS_CHANNELS.values()):
@@ -59,7 +58,15 @@ async def moo_moc_alerts():
 
         await asyncio.sleep(30)
 
-client.loop.create_task(news_loop())
-client.loop.create_task(moo_moc_alerts())
+@client.event
+async def on_ready_event():
+    await on_ready()
 
-client.run(DISCORD_TOKEN)
+async def main():
+    async with client:
+        client.loop.create_task(news_loop())
+        client.loop.create_task(moo_moc_alerts())
+        await client.start(DISCORD_TOKEN)
+
+if __name__ == "__main__":
+    asyncio.run(main())
