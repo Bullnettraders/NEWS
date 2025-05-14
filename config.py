@@ -20,4 +20,5 @@ RSS_FEEDS_CHANNELS = {
     "https://feeds.finance.yahoo.com/rss/2.0/headline?s=^DJI&region=US&lang=en-US": 1372212944926015560,
     "https://feeds.oilprice.com/oilpricecom/BreakingNews": 1372212944926015560,
     "https://www.coindesk.com/arc/outboundfeeds/rss/": 1372212944926015560,
+    "https://rss.app/feeds/4NfbW8s5xqV7G7M4.xml": 1371879824997744791,  # Trump's eigene Truth Social Posts
 }
