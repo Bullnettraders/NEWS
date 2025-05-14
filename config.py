@@ -1,7 +1,9 @@
 # config.py
 
-DISCORD_TOKEN = "HIER_DEIN_BOT_TOKEN_EINFÜGEN"
-CHANNEL_ID = 1372212944926015560
+import os
+
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
 
 RSS_FEEDS = [
     "https://www.reutersagency.com/feed/?best-topics=business-finance&post_type=best",
@@ -9,4 +11,4 @@ RSS_FEEDS = [
     "https://feeds.marketwatch.com/marketwatch/bulletins/"
 ]
 
-FETCH_INTERVAL = 60  # alle 60 Sekunden abrufen
+FETCH_INTERVAL = 60  # Sekunden
