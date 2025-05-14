@@ -7,8 +7,8 @@ def fetch_news(feed_url):
         title = getattr(entry, "title", None)
         link = getattr(entry, "link", None)
         summary = getattr(entry, "summary", None)
-        
-        # Bild finden (optional)
+
+        # Bild suchen
         image = None
         if hasattr(entry, "media_content"):
             media = entry.media_content
