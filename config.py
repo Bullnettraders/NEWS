@@ -1,9 +1,15 @@
+import os
+
+# Token aus Railway Environment Variable holen
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+
+# News-Abruf alle 60 Sekunden
+FETCH_INTERVAL = 60  # Sekunden
+
+# Alle Feeds + Channel-Zuordnung
 RSS_FEEDS_CHANNELS = {
-    # Trump News + Truth Social Posts
     "https://rss.app/feeds/6ylmybWwgG1OqovY.xml": 1371879824997744791,  # Trump News
     "https://rss.app/feeds/4NfbW8s5xqV7G7M4.xml": 1371879824997744791,  # Trump eigene Posts
-
-    # Alle anderen Feeds bleiben wie vorher:
     "https://www.n-tv.de/rss": 1371879772367622225,
     "https://rss.app/feeds/LHqcalDfUI6gqB33.xml": 1371879882258124840,
     "https://rss.app/feeds/BCVWNnbILyMc16Px.xml": 1371889076009177119,
