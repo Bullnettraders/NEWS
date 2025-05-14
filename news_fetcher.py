@@ -1,15 +1,12 @@
-# news_fetcher.py
-
 import feedparser
 
-def fetch_news(rss_feeds):
-    news = []
-    for url in rss_feeds:
-        feed = feedparser.parse(url)
-        for entry in feed.entries:
-            news.append({
-                "title": entry.title,
-                "link": entry.link,
-                "source": url.split("//")[1].split("/")[0]  # z.B. reuters.com
-            })
-    return news
+def fetch_news(feed_url):
+    feed = feedparser.parse(feed_url)
+    news_items = []
+    for entry in feed.entries[:5]:  # Nur die neuesten 5 Artikel
+        news_items.append({
+            "title": entry.title,
+            "link": entry.link,
+            "source": feed_url
+        })
+    return news_items
