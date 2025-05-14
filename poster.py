@@ -24,8 +24,9 @@ async def post_news(news_item, client, channel_id):
             color=embed_color
         )
 
+        # GANZE Zusammenfassung ohne kürzen
         if translated_summary:
-            embed.add_field(name="Zusammenfassung", value=translated_summary[:200] + "...", inline=False)
+            embed.add_field(name="Zusammenfassung", value=translated_summary, inline=False)
 
         if "image" in news_item and news_item["image"]:
             embed.set_thumbnail(url=news_item["image"])
