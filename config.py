@@ -1,16 +1,25 @@
 import os
 
+def get_channel_id(var_name):
+    value = os.getenv(var_name)
+    if value is None:
+        raise ValueError(f"Umgebungsvariable '{var_name}' ist nicht gesetzt.")
+    return int(value)
+
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+if DISCORD_TOKEN is None:
+    raise ValueError("Die Umgebungsvariable 'DISCORD_TOKEN' ist nicht gesetzt.")
 
 FETCH_INTERVAL = 60  # Sekunden
 
-# Kanal-IDs aus Umgebungsvariablen laden
-channel_ntv = int(os.getenv("RSS_NTV"))
-channel_investing = int(os.getenv("RSS_INVESTING"))
-channel_watcher = int(os.getenv("RSS_WATCHER"))
-channel_times = int(os.getenv("RSS_TIMES"))
-channel_wirtschaft = int(os.getenv("RSS_WIRTSCHAFT"))
+# Kanal-IDs aus Umgebungsvariablen
+channel_ntv = get_channel_id("RSS_NTV")
+channel_investing = get_channel_id("RSS_INVESTING")
+channel_watcher = get_channel_id("RSS_WATCHER")
+channel_times = get_channel_id("RSS_TIMES")
+channel_wirtschaft = get_channel_id("RSS_WIRTSCHAFT")
 
+# Feed-zu-Channel-Zuordnung
 RSS_FEEDS_CHANNELS = {
     # n-tv Feed
     "https://www.n-tv.de/wirtschaft/rss": channel_ntv,
