@@ -32,7 +32,7 @@ if kanal_ntv:
     })
 
 if kanal_finanzen:
-    RSS_FEEDS_CHANNELS["https://www.finanzen.net/rss/aktuell"] = kanal_finanzen
+    RSS_FEEDS_CHANNELS["https://www.finanzen.net/rss/news"] = kanal_finanzen
 
 if kanal_watcher:
     RSS_FEEDS_CHANNELS["https://rss.app/feeds/BCVWNnbILyMc16Px.xml"] = kanal_watcher
