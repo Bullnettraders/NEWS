@@ -2,16 +2,16 @@ import discord
 from discord.ext import tasks, commands
 import feedparser
 from config import DISCORD_TOKEN, RSS_FEEDS_CHANNELS, FETCH_INTERVAL
+from translator import translate_text
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# Speicher bereits gesendeter Links
 sent_entries = set()
 
 @bot.event
 async def on_ready():
-    print(f"Bot ist eingeloggt als {bot.user}")
+    print(f"✅ Bot gestartet als {bot.user}")
     fetch_rss_feeds.start()
 
 @tasks.loop(seconds=FETCH_INTERVAL)
@@ -25,10 +25,15 @@ async def fetch_rss_feeds():
                     try:
                         channel = bot.get_channel(channel_id)
                         if channel:
-                            await channel.send(f"📰 **{entry.title}**\n{entry.link}")
+                            title_de = translate_text(entry.title)
+                            summary = entry.summary if hasattr(entry, "summary") else ""
+                            summary_de = translate_text(summary)
+
+                            nachricht = f"📰 **{title_de}**\n{summary_de}\n{entry.link}"
+                            await channel.send(nachricht)
                         else:
-                            print(f"Kanal mit ID {channel_id} nicht gefunden.")
+                            print(f"❌ Kanal-ID {channel_id} nicht gefunden.")
                     except Exception as e:
-                        print(f"Fehler beim Senden an Kanal {channel_id}: {e}")
+                        print(f"❌ Fehler beim Senden an Kanal {channel_id}: {e}")
 
 bot.run(DISCORD_TOKEN)
