@@ -1,72 +1,34 @@
 import discord
-import asyncio
-import datetime
-import os
+from discord.ext import tasks, commands
+import feedparser
 from config import DISCORD_TOKEN, RSS_FEEDS_CHANNELS, FETCH_INTERVAL
-from news_fetcher import fetch_news
-from translator import translate_text
-from deduplicator import is_new
-from poster import post_news
-from keep_alive import keep_alive
 
 intents = discord.Intents.default()
-intents.message_content = True
-client = discord.Client(intents=intents)
+bot = commands.Bot(command_prefix="!", intents=intents)
 
-keep_alive()
+# Speicher bereits gesendeter Links
+sent_entries = set()
 
+@bot.event
 async def on_ready():
-    print(f'{client.user} ist online und postet News.')
+    print(f"Bot ist eingeloggt als {bot.user}")
+    fetch_rss_feeds.start()
 
-async def news_loop():
-    await client.wait_until_ready()
-    while not client.is_closed():
-        for feed_url, channel_id in RSS_FEEDS_CHANNELS.items():
-            news_list = fetch_news(feed_url)
-            for news_item in news_list:
-                if is_new(news_item):
-                    translated_title = translate_text(news_item["title"])
-                    news_item["translated_title"] = translated_title
-                    await post_news(news_item, client, channel_id)
-        await asyncio.sleep(FETCH_INTERVAL)
+@tasks.loop(seconds=FETCH_INTERVAL)
+async def fetch_rss_feeds():
+    for feed_url, channel_id in RSS_FEEDS_CHANNELS.items():
+        feed = feedparser.parse(feed_url)
+        if feed.entries:
+            for entry in feed.entries[:3]:  # nur die letzten 3 prüfen
+                if entry.link not in sent_entries:
+                    sent_entries.add(entry.link)
+                    try:
+                        channel = bot.get_channel(channel_id)
+                        if channel:
+                            await channel.send(f"📰 **{entry.title}**\n{entry.link}")
+                        else:
+                            print(f"Kanal mit ID {channel_id} nicht gefunden.")
+                    except Exception as e:
+                        print(f"Fehler beim Senden an Kanal {channel_id}: {e}")
 
-async def moo_moc_alerts():
-    await client.wait_until_ready()
-    sent_today_open = False
-    sent_today_close = False
-
-    while not client.is_closed():
-        now = datetime.datetime.utcnow() + datetime.timedelta(hours=2)
-
-        if now.hour == 15 and now.minute == 0 and not sent_today_open:
-            for channel_id in set(RSS_FEEDS_CHANNELS.values()):
-                channel = client.get_channel(channel_id)
-                if channel:
-                    await channel.send("🔔 Nasdaq 100 (NQ) Market Open: Achte auf MOO-Volumen!")
-            sent_today_open = True
-
-        if now.hour == 21 and now.minute == 30 and not sent_today_close:
-            for channel_id in set(RSS_FEEDS_CHANNELS.values()):
-                channel = client.get_channel(channel_id)
-                if channel:
-                    await channel.send("🔔 Nasdaq 100 (NQ) Market Close: Achte auf MOC-Volumen!")
-            sent_today_close = True
-
-        if now.hour == 0 and now.minute == 0:
-            sent_today_open = False
-            sent_today_close = False
-
-        await asyncio.sleep(30)
-
-@client.event
-async def on_ready_event():
-    await on_ready()
-
-async def main():
-    async with client:
-        client.loop.create_task(news_loop())
-        client.loop.create_task(moo_moc_alerts())
-        await client.start(DISCORD_TOKEN)
-
-if __name__ == "__main__":
-    asyncio.run(main())
+bot.run(DISCORD_TOKEN)
