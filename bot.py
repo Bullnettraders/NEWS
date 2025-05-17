@@ -25,10 +25,17 @@ async def fetch_rss_feeds():
                     try:
                         channel = bot.get_channel(channel_id)
                         if channel:
+                            # Titel übersetzen
                             title_de = translate_text(entry.title)
-                            summary = entry.summary if hasattr(entry, "summary") else ""
+
+                            # Zusammenfassung prüfen und übersetzen
+                            summary = getattr(entry, "summary", None)
+                            if not summary:
+                                summary = "Keine Vorschau verfügbar."
+
                             summary_de = translate_text(summary)
 
+                            # Einheitliche Nachricht senden
                             nachricht = f"📰 **{title_de}**\n{summary_de}\n{entry.link}"
                             await channel.send(nachricht)
                         else:
