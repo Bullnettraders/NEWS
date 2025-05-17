@@ -18,7 +18,7 @@ if DISCORD_TOKEN is None:
 FETCH_INTERVAL = 60  # Sekunden
 
 kanal_ntv = sichere_kanal_id("RSS_NTV")
-kanal_investing = sichere_kanal_id("RSS_INVESTING")
+kanal_finanzen = sichere_kanal_id("RSS_FINANZEN")  # statt Investing
 kanal_watcher = sichere_kanal_id("RSS_WATCHER")
 kanal_times = sichere_kanal_id("RSS_TIMES")
 kanal_wirtschaft = sichere_kanal_id("RSS_WIRTSCHAFT")
@@ -31,8 +31,8 @@ if kanal_ntv:
         "https://www.n-tv.de/politik/rss": kanal_ntv,
     })
 
-if kanal_investing:
-    RSS_FEEDS_CHANNELS["https://rss.app/feeds/LHqcalDfUI6gqB33.xml"] = kanal_investing
+if kanal_finanzen:
+    RSS_FEEDS_CHANNELS["https://www.finanzen.net/rss/aktuell"] = kanal_finanzen
 
 if kanal_watcher:
     RSS_FEEDS_CHANNELS["https://rss.app/feeds/BCVWNnbILyMc16Px.xml"] = kanal_watcher
