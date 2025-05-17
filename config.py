@@ -7,6 +7,8 @@ FETCH_INTERVAL = 60  # Sekunden
 RSS_FEEDS_CHANNELS = {
     # n-tv Feed
     "https://www.n-tv.de/wirtschaft/rss": 1371879772367622225,
+    "https://www.n-tv.de/politik/rss": 1371879772367622225,
+
 
     # Investing
     "https://rss.app/feeds/LHqcalDfUI6gqB33.xml": 1371879882258124840,
