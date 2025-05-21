@@ -35,7 +35,7 @@ if kanal_finanzen:
     RSS_FEEDS_CHANNELS["https://www.finanzen.net/rss/news"] = kanal_finanzen
 
 if kanal_watcher:
-    RSS_FEEDS_CHANNELS["https://rss.app/feeds/BCVWNnbILyMc16Px.xml"] = kanal_watcher
+    RSS_FEEDS_CHANNELS["https://nitter.net/search?f=tweets&q=watcher_guru"] = kanal_watcher
 
 if kanal_times:
     RSS_FEEDS_CHANNELS["https://rss.app/feeds/tTF0IKUt7fim3O2Q.xml"] = kanal_times
