@@ -38,7 +38,7 @@ if kanal_watcher:
     RSS_FEEDS_CHANNELS["https://rsshub.app/twitter/user/WatcherGuru"] = kanal_watcher
 
 if kanal_times:
-    RSS_FEEDS_CHANNELS["https://rss.app/feeds/tTF0IKUt7fim3O2Q.xml"] = kanal_times
+    RSS_FEEDS_CHANNELS["https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml"] = kanal_times
 
 if kanal_wirtschaft:
     RSS_FEEDS_CHANNELS.update({
